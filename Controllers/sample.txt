@@ -1,0 +1,10 @@
+dotnet aspnet-codegenerator controller -name ZeroController -async -api -m TodoItem -dc TodoContext -outDir Controllers
+
+
+
+
+
+
+if(customer.CUstomerPhoto != null && customer.CUstomerPhoto !=""){
+                FileService.MoveTempFile("CustomerPhoto",customer.CustomerId.ToString(), customer.CUstomerPhoto);
+            }

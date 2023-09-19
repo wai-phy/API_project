@@ -1,0 +1,89 @@
+        
+        //ex1
+        var qry1 = from cus in _context.Customers
+                    where cus.JobTitle == "Owner" && cus.City =="Seattle"
+                    select new {
+                        cus.Id,
+                        cus.FirstName,
+                        cus.LastName,
+                        cus.JobTitle,
+                        cus.EmailAddress
+                    };
+        //ex2
+        var qry2 = from ord in _context.Orders
+                    join cus in _context.Customers on ord.CustomerId equals cus.Id
+                    where cus.City == "Seattle" && ord.OrderDate.Month == 03 && ord.OrderDate.Year == 2006
+                    select new {
+                        ord.Id,
+                        ord.CustomerId,
+                        cus.FirstName,
+                        cus.LastName
+                    };
+        //ex3
+        var qry3 = from ord in _context.Orders
+                    group ord by new {ord.Id,ord.ShipName} into d 
+                    orderby d.Key.Id
+                    select new{
+                        d.Key.Id,
+                        d.Key.ShipName,
+                        Count =d.Count()
+                    };
+        
+         //ex4
+         var qry4 = from sp in _context.Shippers
+                    join ord in _context.Orders on sp.Id equals ord.ShipperId into ordsp
+                    from ordspl in ordsp.DefaultIfEmpty()
+                    group ordspl by new {sp.Id, sp.Company,sp.City} into d 
+                    orderby d.Key.Id
+                    select new{
+                        d.Key.Id,
+                        d.Key.Company,
+                        d.Key.City,
+                        Count =d.Count(x=> x !=null)
+                    };
+        //ex5
+        var qry5 = from prod in _context.Products
+                    join ordd in _context.OrderDetails on  prod.Id equals ordd.ProductId
+                    join ord in _context.Orders on ordd.OrderId equals   ord.Id
+                    where(ord.OrderDate >= new DateTime(2006,3,1) && ord.OrderDate < new DateTime(2006,4,1) && prod.Category == "Beverages")
+                    group ordd by new{prod.Id, prod.ProductName,prod.Category, ordd.Quantity, ordd.UnitPrice} into g
+                    orderby g.Key.Id descending
+                    select new{
+                        g.Key.Id,
+                        g.Key.ProductName,
+                        g.Key.Category,
+                        Count = g.Count(),
+                        Totalorder = g.Sum(x=> x.Quantity * x.UnitPrice) * g.Count()
+                    };
+                    
+        //ex6
+        var qry6 =from pod in _context.PurchaseOrderDetails
+                    join prod in _context.Products on pod.ProductId equals prod.Id
+                    join po in _context.PurchaseOrders on pod.PurchaseOrderId equals po.Id
+                    select new{
+                        prod.Id,
+                        prod.ProductName,
+                        prod.Category,
+                        prod.ProductCode,
+                        BalanceQuantity = (pod.Quantity * pod.UnitCost)
+                    };
+
+
+        //ex7
+        var qry7 = from ord in _context.Orders
+                    join cus in _context.Customers on ord.CustomerId equals cus.Id
+                    join ordd in _context.OrderDetails on ord.Id equals ordd.OrderId
+                    where (ord.OrderDate >= new DateTime(2006,3,1) && ord.OrderDate < new DateTime(2006,4,1) && cus.City == "New York")
+                    select new{
+                        cus.Id,
+                        cus.FirstName,
+                        cus.LastName,
+                        cus.City,
+                        ordd.UnitPrice,
+                        ordd.Quantity,
+                        TotalAmount = (ordd.Quantity * ordd.UnitPrice)
+                    };
+        
+
+
+        

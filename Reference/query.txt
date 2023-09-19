@@ -1,0 +1,59 @@
+SELECT e.id,e.first_name,e.last_name,e.city,e.country_region FROM employees AS e 
+//ex-1
+
+SELECT e.id,e.first_name,e.last_name,e.city FROM employees AS e WHERE e.city = "Seattle"
+//ex-2
+
+SELECT ord.Id,ord.order_date,SUM(ordd.quantity * ordd.unit_price) AS amount FROM orders AS ord JOIN order_details AS ordd ON ord.id = ordd.order_id
+//ex-3
+
+SELECT ord.id,ord.order_date,ord.ship_name,SUM(ordd.quantity * ordd.unit_price) AS amount FROM orders AS ord JOIN order_details AS ordd ON ord.id = ordd.order_id GROUP BY ord.id,ord.order_date,ord.ship_name
+//ex-4
+
+SELECT ord.id,ord.order_date,ord.ship_name , SUM(ordd.quantity * ordd.unit_price)  AS Amount FROM orders AS ord JOIN order_details AS ordd ON ord.id = ordd.order_id ORDER BY ord.order_date 
+//ex-5
+
+SELECT e.id,e.first_name,e.last_name,ord.ship_city FROM employees AS e JOIN orders AS ord ON e.id = ord.employee_id WHERE ord.ship_city = "New York"
+//ex-6
+
+SELECT cus.city,sh.company,e.first_name,e.last_name FROM customers AS cus JOIN orders AS ord ON cus.id = ord.customer_id JOIN employees AS e ON e.id = ord.employee_id JOIN shippers AS sh ON sh.id = ord.shipper_id WHERE cus.city = "New York" AND sh.company = "Shipping Company A"
+//ex-7
+
+ SELECT e.id,e.first_name,e.last_name,prod.product_code FROM employees AS e JOIN orders AS ord ON e.id = ord.employee_id JOIN order_details AS ordd ON ord.id = ordd.order_id JOIN products AS prod ON ordd.product_id = prod.id WHERE prod.product_code = "NWTB-81" OR prod.product_code = "NWTC-82"
+ //ex-8
+
+ SELECT ord.id,ord.ship_name,ord.order_date FROM orders AS ord WHERE ord.order_date BETWEEN "2006-1-1" AND "2006-2-1"
+ //ex-9
+
+ SELECT cus.id,cus.first_name,cus.last_name,COUNT(*) AS Numberoforders FROM customers AS cus JOIN orders AS ord ON cus.id = ord.customer_id GROUP  BY cus.id,cus.first_name,cus.last_name
+ //ex-10
+
+ SELECT month(order_date) AS month, COUNT(*) AS numberoforders FROM orders GROUP BY month(order_date)
+ //ex-11 
+
+ SELECT ordd.order_id, ordd.product_id,inv.comments FROM order_details AS ordd JOIN inventory_transactions AS inv ON (ordd.order_id,ordd.product_id) = (order_id = inv.customer_order_id,inv.product_id)
+ //ex-12
+
+ SELECT cus.id,cus.first_name,cus.last_name, COUNT(*) AS numberofOrders FROM customers AS cus JOIN orders AS ord ON cus.id = ord.customer_id GROUP BY cus.id,cus.first_name,cus.last_name
+ //ex-13 
+
+ SELECT cus.id,cus.first_name,cus.last_name,COUNT(ord.customer_id) AS numberofOrder FROM customers AS cus LEFT JOIN orders AS ord ON cus.id = ord.customer_id GROUP by cus.id,cus.first_name,cus.last_name
+ //ex-14 
+
+ SELECT cus.id,cus.city,cus.first_name,cus.last_name FROM customers AS cus WHERE cus.job_title = "Owner" AND cus.city = "Seattle"
+ //ex-15
+
+ SELECT ord.id,ord.order_date,ord.ship_city,cus.city FROM customers AS cus JOIN orders AS ord ON cus.id = ord.customer_id WHERE ord.order_date BETWEEN "2006-3-1" AND "2006-4-1" && cus.city = "Seattle"
+ //ex-16 
+
+ SELECT ord.id,ord.ship_name,COUNT(*) AS NumberOfOrder FROM orders AS ord GROUP BY ord.id,ord.ship_name ORDER BY ord.order_date DESC
+ //ex-17 
+
+ SELECT sh.id,sh.company,COUNT(ord.shipper_id) AS NumberofOrders FROM shippers AS sh LEFT JOIN orders AS ord ON sh.id = ord.shipper_id GROUP BY sh.id,sh.company
+ //ex-18
+
+ SELECT prod.id,prod.category,SUM(ordd.quantity*ordd.unit_price) AS Amount FROM products AS prod JOIN order_details AS ordd ON prod.id = ordd.product_id JOIN orders AS ord ON ord.id = ordd.order_id WHERE ord.order_date BETWEEN "2006-1-1" AND "2006-4-1" && prod.category = "Beverages" GROUP BY prod.id, prod.product_name,prod.category
+ //ex-19
+
+ SELECT cus.id,cus.first_name,cus.last_name,SUM(ordd.quantity* ordd.unit_price) AS TotalAmount FROM customers AS cus LEFT JOIN (SELECT *  FROM orders AS ord WHERE ord.order_date BETWEEN "2006-2-28" AND "2006-4-1") ord ON cus.id = ord.customer_id LEFT JOIN order_details AS ordd ON ord.id = ordd.order_id WHERE cus.city = "New York" GROUP BY cus.id,cus.first_name,cus.last_name
+ //ex-21
